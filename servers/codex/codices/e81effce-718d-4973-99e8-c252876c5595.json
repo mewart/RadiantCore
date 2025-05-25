@@ -1,0 +1,10 @@
+{
+  "title": "Test Entry",
+  "body": "This is a test codex entry.",
+  "tags": [
+    "milestone",
+    "test"
+  ],
+  "version": 1,
+  "codex_id": 42
+}

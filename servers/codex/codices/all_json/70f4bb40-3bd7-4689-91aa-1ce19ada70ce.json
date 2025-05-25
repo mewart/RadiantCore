@@ -1,0 +1,14 @@
+{
+  "title": "Digital Temple Blueprint v1 – Pages, Schema, and API Layout",
+  "body": "// Society of Light – Digital Temple Starter\n// Stack: Next.js + Supabase + Vercel\n// Project Outline and file structure for full-stack deployment.\n(includes: schema.sql, codex.ts, program detail page, role-based routing, admin form, and index pages)",
+  "tags": [
+    "society-of-light",
+    "next.js",
+    "architecture",
+    "starter",
+    "milestone"
+  ],
+  "system_component": "WebApp",
+  "milestone_rank": 3,
+  "emotional_state": "structured"
+}

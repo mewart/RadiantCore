@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test ElevenLabs TTS</title>
+</head>
+<body>
+  <button onclick="speak()">Test Speak</button>
+  <audio id="player" controls></audio>
+
+  <script>
+    async function speak() {
+      const response = await fetch("http://localhost:3300/api/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: "This is a test from the browser" })
+      });
+
+      const blob = await response.blob();
+      const audioURL = URL.createObjectURL(blob);
+      document.getElementById("player").src = audioURL;
+      document.getElementById("player").play();
+    }
+  </script>
+</body>
+</html>

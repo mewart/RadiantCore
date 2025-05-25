@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+**/node_modules/
+
+# Python
+.venv/
+**/.venv/
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+*.log
+
+# IDEs & OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local Codices
+codex_server/codices/

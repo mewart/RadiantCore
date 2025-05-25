@@ -1,0 +1,14 @@
+{
+  "title": "Port Allocation – Local Development Environment",
+  "body": "To avoid port conflicts, the following ports are reserved by convention:\n\n- 3000 → Reserved by other local UIs (default Next.js port)\n- 3100 → Damian Voice Server (WebSocket + HTTP)\n- 3101 → Society of Light Web UI (Next.js frontend)\n- 8000 → Codex API (Node.js)\n- 8787 → Cloudflare tunnel default (Cloudflared)\n\nAll team members and services should respect these port boundaries to prevent conflicts in development workflows.",
+  "tags": [
+    "config",
+    "ports",
+    "infrastructure",
+    "radiant-core",
+    "milestone"
+  ],
+  "system_component": "SystemConfig",
+  "milestone_rank": 1,
+  "emotional_state": "clear"
+}

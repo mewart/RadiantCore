@@ -1,0 +1,48 @@
+# === Node.js ===
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.eggs/
+Pipfile.lock
+
+# === System / IDE ===
+.DS_Store
+Thumbs.db
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# === Configs / Secrets ===
+.env
+.env.*
+
+# === Build Artifacts ===
+dist/
+build/
+coverage/
+.cache/
+*.tgz
+
+# === Codex Vault & AI Artifacts ===
+vault/
+*.local
+*.checkpoint
+*.ckpt
+*.pth
+
+# === VS Code ===
+.vscode/
+
+# === Docker Volumes ===
+postgres/data/

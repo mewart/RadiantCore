@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Radiant Core Codex API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add Codex Entry",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "RadiantCoreRules!27x9"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Test Entry\",\n  \"body\": \"This is a test codex entry.\",\n  \"tags\": [\n    \"milestone\",\n    \"test\"\n  ],\n  \"version\": 1,\n  \"codex_id\": 42\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3300/api/codex/add"
+        }
+      }
+    },
+    {
+      "name": "Update Codex Entry",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "RadiantCoreRules!27x9"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated Title\",\n  \"body\": \"This is the updated body.\",\n  \"tags\": [\n    \"milestone\",\n    \"updated\"\n  ],\n  \"version\": 2\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3300/api/codex/update/{{uuid_id}}"
+        }
+      }
+    },
+    {
+      "name": "Delete Codex Entry",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "RadiantCoreRules!27x9"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:3300/api/codex/delete/{{uuid_id}}"
+        }
+      }
+    },
+    {
+      "name": "Get All Entries",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "RadiantCoreRules!27x9"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:3300/api/codex/db"
+        }
+      }
+    },
+    {
+      "name": "Get Milestone Entries",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "x-api-key",
+            "value": "RadiantCoreRules!27x9"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:3300/api/codex/milestones/db"
+        }
+      }
+    }
+  ]
+}

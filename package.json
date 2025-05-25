@@ -1,0 +1,29 @@
+{
+  "name": "radiant-core",
+  "version": "1.0.0",
+  "description": "Radiant Core — Unified Codex and AI Systems",
+  "type": "module",
+  "scripts": {
+    "start-codex-api": "node servers/codex/server.js",
+    "start-ai-api": "node servers/ai_api/ai_api_server.js",
+    "start-ai-mindloop": "node servers/ai_mindloop/mindloop_main.js",
+    "start-ai-gateway": "node servers/ai_gateway/server.js",
+    "start-all": "concurrently \"npm run start-codex-api\" \"npm run start-ai-api\" \"npm run start-ai-mindloop\" \"npm run start-ai-gateway\""
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.5"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "next-auth": "^4.24.11",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.15.6",
+    "string-similarity": "^4.0.4",
+    "ws": "^8.18.2"
+  }
+}

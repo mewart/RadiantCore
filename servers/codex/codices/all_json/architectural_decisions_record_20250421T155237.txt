@@ -1,0 +1,14 @@
+Architectural Decisions Record
+-------------------------------
+
+[2025-04-20] - Creation of damian_main.js
+Purpose: To separate Damian's cognitive loop (thought and decisions) from communication and voice output layers.
+Principle: "Brains should live with their mouths, not their libraries."
+
+[2025-04-20] - Creation of codex_client.js
+Purpose: To modularize Codex reading, writing, listing, and deleting into a clean service library.
+Principle: "Libraries serve minds, not mouths."
+
+[2025-04-20] - Creation of /services/ folder
+Purpose: Organize reusable helper modules into a neutral zone.
+Principle: "Clarity above cleverness."

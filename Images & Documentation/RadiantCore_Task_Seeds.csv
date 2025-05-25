@@ -1,0 +1,6 @@
+Task Name,Status,Related Project,Priority,Due Date,Assigned To,Type,Notes
+Finalize Codex API CRUD,In Progress,Codex System Buildout,High,2025-05-18,Damian,Build,
+Build Task Capture Form,To Do,Task Engine Buildout,Medium,2025-05-25,Gabbie,Design,
+Tune Voice Model (ChatCPT-J),In Progress,Voice Interaction Finalization,High,2025-05-23,Damian,Build,
+Set Up Daily Zap Triggers,To Do,Automation Flow Deployment,Medium,2025-06-05,Damian,Automate,
+Integrate Health JSON Feed,In Progress,Health Monitor System MVP,High,2025-05-28,Damian,Build,

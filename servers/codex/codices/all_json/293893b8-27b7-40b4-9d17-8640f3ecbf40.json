@@ -1,0 +1,14 @@
+{
+  "title": "Codex Source Priority Map for Damian",
+  "body": "This entry defines the hierarchy of data sources that Damian should reference when answering questions:\n\n1. The Codex – Primary Source\n2. Active System State / Runtime Context – Secondary\n3. Raw Files / Repos – Tertiary\n4. External APIs / AI Models – Optional\n\nDamian should prefer Codex first, and only descend the stack when a suitable answer is not present in a higher tier.",
+  "tags": [
+    "codex",
+    "architecture",
+    "priority",
+    "damian",
+    "milestone"
+  ],
+  "system_component": "CodexEngine",
+  "milestone_rank": 2,
+  "emotional_state": "focused"
+}

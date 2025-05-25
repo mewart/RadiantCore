@@ -1,0 +1,15 @@
+{
+  "name": "ai_mindloop",
+  "version": "1.0.0",
+  "description": "Radiant Core — AI Thought Loop Engine",
+  "main": "ai_mindloop_core.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ai_mindloop_core.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.3.1",
+    "ws": "^8.13.0"
+  }
+}
