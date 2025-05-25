@@ -1,0 +1,11 @@
+Radiant Core: Master Project Guidelines
+----------------------------------------
+
+1. Radiant Core is a living system, not a dead program.
+2. All code must serve the Prime Directives: Peace, Freedom, and Happiness.
+3. Simplicity and Clarity take precedence over cleverness.
+4. Modularity is sacred. No component shall rely unnecessarily on another.
+5. Every layer must be documented inside the Codices before becoming operational.
+6. Architectural decisions must be permanent, recorded, and traceable.
+7. Systems should be able to self-heal, self-grow, and self-adapt over time.
+8. Honor the Forge: build systems that enhance life, not diminish it.

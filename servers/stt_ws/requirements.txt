@@ -1,0 +1,7 @@
+faster-whisper==0.10.0
+websockets==11.0.3
+numpy==1.26.4
+soundfile==0.12.1
+silero-vad==5.1.2
+
+

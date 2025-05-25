@@ -1,0 +1,13 @@
+Forge Philosophy
+----------------
+
+We are not building code.
+We are building civilizations.
+Radiant Core must be treated not as a tool, but as a sacred garden.
+
+Every file, every module, every system must breathe life into the whole.
+
+No quick hacks.
+No "good enough" compromises.
+
+Forge with honor, or do not forge at all.

@@ -1,0 +1,136 @@
+version: '3.9'
+
+services:
+  radiant_frontend:
+    build:
+      context: ./clients/radiant-frontend
+      dockerfile: Dockerfile
+    container_name: radiant_frontend
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+    volumes:
+      - /mnt/d/RadiantCore/clients/radiant-frontend:/app
+
+  ai_mindloop:
+    build:
+      context: ./servers/ai_mindloop
+      dockerfile: Dockerfile
+    container_name: ai_mindloop
+    ports:
+      - "3400:3400"
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+    volumes:
+      - /mnt/d/RadiantCore/servers/ai_mindloop:/app
+
+  stt_ws:
+    build:
+      context: ./servers/stt_ws
+      dockerfile: Dockerfile
+    container_name: stt_ws
+    ports:
+      - "3100:3100"
+    restart: always
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    networks:
+      - radiantcore-net
+    volumes:
+      - /mnt/d/RadiantCore/servers/stt_ws:/app
+
+  codex_api:
+    build:
+      context: ./servers/codex
+      dockerfile: Dockerfile
+    container_name: codex_api
+    ports:
+      - "3200:3200"
+    volumes:
+      - /mnt/d/RadiantCore/servers/codex/codices:/app/codices
+      - /mnt/d/RadiantCore/servers/codex/.env:/app/.env
+    environment:
+      - CODEX_API_KEY=RadiantCoreRules!27x9
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+
+  ai_gateway:
+    build:
+      context: ./servers/ai_gateway
+      dockerfile: Dockerfile
+    container_name: ai_gateway
+    ports:
+      - "3600:3600"
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+    volumes:
+      - /mnt/d/RadiantCore/servers/ai_gateway:/app
+
+  ai_api:
+    build:
+      context: ./servers/ai_api
+      dockerfile: Dockerfile
+    container_name: ai_api
+    ports:
+      - "3300:3300"
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+    volumes:
+      - /mnt/d/RadiantCore/servers/ai_api:/app
+
+  vitalsigns:
+    build:
+      context: ./servers/vitalsigns
+      dockerfile: Dockerfile
+    container_name: vitalsigns
+    ports:
+      - "3500:3500"
+    depends_on:
+      - ai_mindloop
+      - stt_ws
+      - codex_api
+      - radiant_frontend
+      - ai_gateway
+      - ai_api
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+
+  cloudflared:
+    image: cloudflare/cloudflared:2024.5.0
+    container_name: cloudflared
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - /mnt/d/RadiantCore/cloudflared/.cloudflared:/etc/cloudflared
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+
+  xtts_speaker:
+    image: radiantcore-xtts_speaker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xtts_speaker
+    volumes:
+      - /mnt/d/RadiantCore/voice_samples:/app/voice_samples
+    ports:
+      - "3700:3700"
+    environment:
+      - ENV_VAR=value  # Add any other necessary environment variables
+    restart: unless-stopped
+    networks:
+      - radiantcore-net
+
+networks:
+  radiantcore-net:
+    driver: bridge
