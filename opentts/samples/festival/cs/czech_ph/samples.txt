@@ -1,4 +1,0 @@
-sample_1|Těší mě, že Tě poznávám
-sample_2|Prosím mluv pomaleji
-sample_3|Všechno nejlepší k narozeninám!
-sample_4|Jeden jazyk nikdy nestačí
