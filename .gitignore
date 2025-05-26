@@ -8,7 +8,32 @@ node_modules/
 __pycache__/
 *.pyc
 
-# Environment files
+# Conda environments
+env/
+**/env/
+installer_files/
+**/installer_files/
+
+# Model files and binaries
+*.bin
+*.pth
+*.deb
+*.so
+*.dll
+*.lib
+*.pyd
+*.conda
+*.mp3
+*.wav
+
+# Package manager cache
+**/cache/
+**/pkgs/
+
+# User/model data
+text-generation-webui/user_data/models/
+
+# Environment & runtime
 .env
 *.log
 
