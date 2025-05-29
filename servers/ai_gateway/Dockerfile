@@ -4,11 +4,13 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package.json and package-lock.json if available (ensures dependencies are installed correctly)
 COPY package*.json ./
+
+# Install dependencies listed in package.json
 RUN npm install
 
-# Copy application source
+# Copy all source code (application)
 COPY . .
 
 # Expose the gateway port

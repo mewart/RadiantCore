@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   radiant_frontend:
     build:
@@ -12,7 +10,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/clients/radiant-frontend:/app
+      - /mnt/d/RadiantCore/clients/radiant-frontend:/app  # Adjusted path for WSL
 
   ai_mindloop:
     build:
@@ -25,7 +23,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/ai_mindloop:/app
+      - /mnt/d/RadiantCore/servers/ai_mindloop:/app  # Adjusted path for WSL
 
   stt_ws:
     build:
@@ -43,7 +41,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/stt_ws:/app
+      - /mnt/d/RadiantCore/servers/stt_ws:/app  # Adjusted path for WSL
 
   codex_api:
     build:
@@ -53,8 +51,8 @@ services:
     ports:
       - "3200:3200"
     volumes:
-      - /mnt/d/RadiantCore/servers/codex/codices:/app/codices
-      - /mnt/d/RadiantCore/servers/codex/.env:/app/.env
+      - /mnt/d/RadiantCore/servers/codex/codices:/app/codices  # Adjusted path for WSL
+      - /mnt/d/RadiantCore/servers/codex/.env:/app/.env  # Adjusted path for WSL
     environment:
       - CODEX_API_KEY=RadiantCoreRules!27x9
     restart: unless-stopped
@@ -72,20 +70,23 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/ai_gateway:/app
+      - /mnt/d/RadiantCore/servers/ai_gateway:/app  # Adjusted path for WSL
 
   ai_api:
     build:
       context: ./servers/ai_api
       dockerfile: Dockerfile
     container_name: ai_api
+    dns:
+      - "8.8.8.8"
+      - "8.8.4.4"
     ports:
       - "3300:3300"
     restart: unless-stopped
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/ai_api:/app
+      - /mnt/d/RadiantCore/servers/ai_api:/app  # Adjusted path for WSL
 
   vitalsigns:
     build:
@@ -110,19 +111,18 @@ services:
     container_name: cloudflared
     command: tunnel --config /etc/cloudflared/config.yml run
     volumes:
-      - /mnt/d/RadiantCore/cloudflared/.cloudflared:/etc/cloudflared
+      - /mnt/d/RadiantCore/cloudflared/.cloudflared:/etc/cloudflared  # Ensure this is the correct mount path in WSL
     restart: unless-stopped
     networks:
       - radiantcore-net
 
   xtts_speaker:
-    image: radiantcore-xtts_speaker:latest
     build:
-      context: .
+      context: ./servers/xtts_speaker
       dockerfile: Dockerfile
     container_name: xtts_speaker
     volumes:
-      - /mnt/d/RadiantCore/voice_samples:/app/voice_samples
+      - /mnt/d/RadiantCore/voice_samples:/app/voice_samples  # Adjusted path for WSL
     ports:
       - "3700:3700"
     environment:

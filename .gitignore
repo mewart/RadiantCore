@@ -44,3 +44,8 @@ Thumbs.db
 
 # Local Codices
 codex_server/codices/
+
+# Local Data Files
+data/
+
+venv/

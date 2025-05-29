@@ -1,0 +1,11 @@
+tunnel: 2e6e7b5e-9756-48f1-9947-06d0cea616c4
+credentials-file: D:\RadiantCore\cloudflared\.cloudflared\radiant-remote.json
+
+ingress:
+  - hostname: radiant-core.com
+    service: http://localhost:5173  # Frontend
+  - hostname: api.radiant-core.com
+    service: http://localhost:3300  # API Gateway (updated port)
+  - hostname: voice.radiant-core.com
+    service: http://localhost:3100  # Voice service
+  - service: http_status:404  # Fallback for unmatched requests

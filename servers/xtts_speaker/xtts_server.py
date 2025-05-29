@@ -19,7 +19,13 @@ OUTPUT_DIR = "/app/outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app = FastAPI()
+
+# Initialize the TTS model
 tts = TTS(model_path=MODEL_DIR, config_path=CONFIG_PATH, gpu=False)
+
+# Test model loading
+print("Testing model loading...")
+tts.tts_model.load_model()
 
 @app.get("/health")
 def health():
@@ -33,7 +39,7 @@ async def speak_local(request: Request):
 
     tts.tts_to_file(
         text=text,
-        speaker_wav="D:/RadiantCore/voice_samples/default.wav",  # Use the ElevenLabs voice sample
+        speaker_wav="/app/voice_samples/default.wav",
         language="en",
         file_path=output_path,
         split_sentences=True,
