@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   radiant_frontend:
     build:
@@ -10,7 +12,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/clients/radiant-frontend:/app  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/clients/radiant-frontend:/app
 
   ai_mindloop:
     build:
@@ -22,8 +24,12 @@ services:
     restart: unless-stopped
     networks:
       - radiantcore-net
-    volumes:
-      - /mnt/d/RadiantCore/servers/ai_mindloop:/app  # Adjusted path for WSL
+    # Comment out/remove this line if present:
+    # - /home/mewart/RadiantCore/servers/ai_mindloop:/app
+    #volumes:
+    #  - /home/mewart/RadiantCore/servers/ai_mindloop/ai_mindloop_core.js:/app/ai_mindloop_core.js
+    #  - /home/mewart/RadiantCore/servers/ai_mindloop/services:/app/services
+
 
   stt_ws:
     build:
@@ -41,7 +47,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/stt_ws:/app  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/servers/stt_ws:/app
 
   codex_api:
     build:
@@ -51,8 +57,8 @@ services:
     ports:
       - "3200:3200"
     volumes:
-      - /mnt/d/RadiantCore/servers/codex/codices:/app/codices  # Adjusted path for WSL
-      - /mnt/d/RadiantCore/servers/codex/.env:/app/.env  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/servers/codex/codices:/app/codices
+      - /home/mewart/RadiantCore/servers/codex/.env:/app/.env
     environment:
       - CODEX_API_KEY=RadiantCoreRules!27x9
     restart: unless-stopped
@@ -70,7 +76,9 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/ai_gateway:/app  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/servers/ai_gateway/server.js:/app/server.js
+      - /home/mewart/RadiantCore/servers/ai_gateway/services:/app/services
+      - /home/mewart/RadiantCore/servers/ai_gateway/.env:/app/.env
 
   ai_api:
     build:
@@ -86,7 +94,7 @@ services:
     networks:
       - radiantcore-net
     volumes:
-      - /mnt/d/RadiantCore/servers/ai_api:/app  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/servers/ai_api:/app
 
   vitalsigns:
     build:
@@ -111,10 +119,12 @@ services:
     container_name: cloudflared
     command: tunnel --config /etc/cloudflared/config.yml run
     volumes:
-      - /mnt/d/RadiantCore/cloudflared/.cloudflared:/etc/cloudflared  # Ensure this is the correct mount path in WSL
+      - /mnt/d/RadiantCore/cloudflared_shared/config.yml:/etc/cloudflared/config.yml:ro
+      - /mnt/d/RadiantCore/cloudflared_shared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:/etc/cloudflared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:ro
     restart: unless-stopped
     networks:
       - radiantcore-net
+
 
   xtts_speaker:
     build:
@@ -122,11 +132,11 @@ services:
       dockerfile: Dockerfile
     container_name: xtts_speaker
     volumes:
-      - /mnt/d/RadiantCore/voice_samples:/app/voice_samples  # Adjusted path for WSL
+      - /home/mewart/RadiantCore/voice_samples:/app/voice_samples
     ports:
       - "3700:3700"
     environment:
-      - ENV_VAR=value  # Add any other necessary environment variables
+      - ENV_VAR=value
     restart: unless-stopped
     networks:
       - radiantcore-net
