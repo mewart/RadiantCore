@@ -11,7 +11,9 @@ const API_KEY = process.env.CODEX_API_KEY || 'RadiantCoreRules!27x9';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const CODEX_IMPORT_DIR = path.resolve(__dirname, '../servers/codex/codices');
+
+// ✅ FIXED: Corrected relative path to actual codices folder
+const CODEX_IMPORT_DIR = path.resolve(__dirname, '../../codex/codices');
 const CODEX_DONE_DIR = path.join(CODEX_IMPORT_DIR, '_done');
 
 try {
@@ -66,32 +68,48 @@ export async function readCodex(uuid) {
 
 export async function saveCodex(name, content, promptIfExists = false) {
   const codices = await listCodices();
-  const exists = codices.find(c => c.title.trim().toLowerCase() === name.trim().toLowerCase());
 
-  if (exists) {
-    const similarity = stringSimilarity.compareTwoStrings(content.trim(), exists.body?.trim() || '');
-    console.log(`🧮 Content similarity to existing codex: ${(similarity * 100).toFixed(2)}%`);
+  // 🧠 Attempt to find the actual codex file by matching .title field
+  const files = fs.readdirSync(CODEX_IMPORT_DIR).filter(f => f.endsWith('.json'));
+  let actualFilename = null;
 
-    const disposition = similarity >= 0.9
-      ? 'skipped_similarity_90+'
-      : 'existing_title';
-
-    await moveCodexFile(name, disposition);
-
-    if (similarity >= 0.9) {
-      console.warn(`⚠️ Codex titled "${name}" has highly similar content. Skipping save.`);
-      return { message: 'Codex content is very similar to existing entry', similarity, existing: exists, status: 'duplicate' };
-    }
-
-    if (promptIfExists) {
-      console.warn(`⚠️ Codex titled "${name}" already exists (UUID: ${exists.uuid}). Prompt user for overwrite confirmation in UI.`);
-      return { message: 'Codex already exists', similarity, existing: exists, status: 'exists' };
-    } else {
-      console.warn(`⚠️ Codex titled "${name}" already exists. Skipping save.`);
-      return { message: 'Codex already exists', existing: exists, status: 'exists' };
+  for (const f of files) {
+    try {
+      const filePath = path.join(CODEX_IMPORT_DIR, f);
+      const fileData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (fileData.title?.trim().toLowerCase() === name.trim().toLowerCase()) {
+        actualFilename = f;
+        break;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Could not parse ${f}:`, err.message);
     }
   }
 
+  if (!actualFilename) {
+    console.warn(`⚠️ No matching file found in codices/ for title "${name}". Disposition may be skipped.`);
+  }
+
+  // 🔍 Check if this codex already exists in the DB
+  const existing = codices.find(c => c.title.trim().toLowerCase() === name.trim().toLowerCase());
+
+  if (existing) {
+    const similarity = stringSimilarity.compareTwoStrings(content.trim(), existing.body?.trim() || '');
+    const status = similarity >= 0.9 ? 'skipped_similarity_90+' : 'existing_title';
+
+    if (actualFilename) {
+      await moveCodexFile(actualFilename, status);
+    }
+
+    return {
+      status,
+      similarity,
+      existing,
+      proposed: { title: name, body: content }
+    };
+  }
+
+  // 🚀 New codex - submit to API
   const entry = {
     title: name,
     body: content,
@@ -101,7 +119,11 @@ export async function saveCodex(name, content, promptIfExists = false) {
   };
 
   const response = await request('/add', 'POST', entry);
-  await moveCodexFile(name, 'saved');
+
+  if (actualFilename) {
+    await moveCodexFile(actualFilename, 'saved');
+  }
+
   return { ...response, status: 'saved' };
 }
 
@@ -111,13 +133,29 @@ async function moveCodexFile(filename, disposition) {
   const destPath = path.join(destDir, filename);
 
   try {
+    console.log(`🔁 Attempting to move file: ${filename}`);
+    console.log(`   From: ${srcPath}`);
+    console.log(`   To:   ${destPath}`);
+
+    // Ensure destination folder exists
     fs.mkdirSync(destDir, { recursive: true });
-    if (fs.existsSync(srcPath)) {
+
+    if (!fs.existsSync(srcPath)) {
+      console.warn(`❌ Source file not found: ${srcPath}`);
+      return;
+    }
+
+    try {
       fs.renameSync(srcPath, destPath);
-      console.log(`📂 Moved processed codex to: ${destPath}`);
+      console.log(`✅ File moved to: ${destPath}`);
+    } catch (renameErr) {
+      console.warn(`⚠️ Rename failed. Attempting fallback copy/delete...`, renameErr.message);
+      fs.copyFileSync(srcPath, destPath);
+      fs.unlinkSync(srcPath);
+      console.log(`✅ File copied and deleted as fallback: ${destPath}`);
     }
   } catch (err) {
-    console.warn(`⚠️ Failed to move ${filename} to disposition folder:`, err.message);
+    console.error(`❌ moveCodexFile() failed:`, err.message);
   }
 }
 

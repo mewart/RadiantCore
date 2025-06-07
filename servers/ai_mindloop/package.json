@@ -1,16 +1,14 @@
 {
-  "name": "ai_mindloop",
+  "name": "ai-mindloop",
   "version": "1.0.0",
-  "description": "Radiant Core — AI Thought Loop Engine",
-  "main": "ai_mindloop_core.js",
   "type": "module",
+  "main": "ai_mindloop_core.js",
   "scripts": {
     "start": "node ai_mindloop_core.js"
   },
   "dependencies": {
-    "dotenv": "^16.3.1",
-    "node-fetch": "^3.3.2",
-    "string-similarity": "^4.0.4",
-    "ws": "^8.18.2"
+    "ws": "^8.13.0",
+    "string-similarity": "^4.0.0",
+    "node-fetch": "^3.3.2"
   }
 }

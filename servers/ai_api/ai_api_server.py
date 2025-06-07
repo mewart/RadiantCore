@@ -1,26 +1,20 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-import requests
-import os
 from fastapi.responses import JSONResponse, StreamingResponse
-from dotenv import load_dotenv
+import requests
 from io import BytesIO
+import os
+from dotenv import load_dotenv
 
-# Load environment variables from the .env file
+# Load .env
 load_dotenv()
 
-# Retrieve the API key
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-VOICE_ID = "EXAVITQu4vr4xnSDxMaL"  # Replace with your ElevenLabs voice ID
-
-headers = {
-    "xi-api-key": ELEVENLABS_API_KEY,
-    "Content-Type": "application/json"
-}
+# Default XTTS endpoint inside Docker network
+XTTS_API_URL = os.getenv("XTTS_API_URL", "http://xtts_speaker:3600/speak")
 
 app = FastAPI()
 
-# Enable CORS
+# === Enable CORS ===
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -28,6 +22,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ai_api online"}
 
 @app.post("/api/chat")
 async def chat(request: Request):
@@ -44,28 +42,17 @@ async def speak(request: Request):
         return JSONResponse(status_code=400, content={"error": "No text provided"})
 
     try:
-        response = requests.post(
-            f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}",
-            headers=headers,
-            json={
-                "text": text,
-                "voice_settings": {
-                    "stability": 0.4,
-                    "similarity_boost": 0.75
-                }
-            }
-        )
+        response = requests.post(XTTS_API_URL, json={"text": text}, timeout=30)
 
         if response.status_code != 200:
             return JSONResponse(status_code=500, content={
-                "error": "ElevenLabs request failed",
+                "error": "XTTS request failed",
                 "status_code": response.status_code,
                 "details": response.text
             })
 
-        # Stream audio to client
         audio_stream = BytesIO(response.content)
-        return StreamingResponse(audio_stream, media_type="audio/mpeg")
+        return StreamingResponse(audio_stream, media_type="audio/wav")
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})

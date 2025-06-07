@@ -1,0 +1,28 @@
+{
+  "folders": [
+    {
+      "name": "RadiantCore",
+      "path": "."
+    },
+    {
+      "name": "PostgreSQL",
+      "path": "../PostgreSQL"
+    },
+    {
+      "name": "sol-digital-temple",
+      "path": "C:/Users/marke/sol-digital-temple"
+    }
+  ],
+  "settings": {
+    "git.ignoreLimitWarning": true,
+    "terminal.integrated.profiles.windows": {
+      "PowerShell": {
+        "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      },
+      "WSL": {
+        "path": "wsl.exe"
+      }
+    },
+    "terminal.integrated.defaultProfile.windows": "WSL"
+  }
+}

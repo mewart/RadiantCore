@@ -10,9 +10,11 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,      // 👈 Exposes server to Docker network (0.0.0.0)
+    host: '0.0.0.0', // Listen on all interfaces (required for Docker/Cloudflare)
     port: 5173,
+    allowedHosts: [
+      'radiant-core.com',
+      'www.radiant-core.com', // Optional: if you want to use www as well
+    ],
   },
 });
-
-

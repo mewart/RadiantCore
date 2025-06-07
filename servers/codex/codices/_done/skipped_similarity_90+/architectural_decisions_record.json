@@ -1,0 +1,7 @@
+{
+  "title": "Architectural Decisions Record",
+  "body": "[2025-04-20] - Creation of damian_main.js\nPurpose: To separate Damian's cognitive loop (thought and decisions) from communication and voice output layers.\nPrinciple: \"Brains should live with their mouths, not their libraries.\"\n\n[2025-04-20] - Creation of codex_client.js\nPurpose: To modularize Codex reading, writing, listing, and deleting into a clean service library.\nPrinciple: \"Libraries serve minds, not mouths.\"\n\n[2025-04-20] - Creation of /services/ folder\nPurpose: Organize reusable helper modules into a neutral zone.\nPrinciple: \"Clarity above cleverness.\"",
+  "tags": ["architecture", "decisions", "infrastructure"],
+  "version": 1,
+  "codex_id": 0
+}

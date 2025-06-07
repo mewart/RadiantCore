@@ -28,6 +28,19 @@ export async function saveCodex(name, content) {
 }
 
 // Delete a Codex
-export async function deleteCodex(name) {
-  return await rawDeleteCodex(name);
+export async function deleteCodex(uuid) {
+  const response = await fetch(`http://codex_api:3200/api/codex/${uuid}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'RadiantCoreRules!27x9'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed Codex API call');
+  }
+
+  return true;
 }
+

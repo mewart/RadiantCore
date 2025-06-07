@@ -12,6 +12,7 @@ from faster_whisper import WhisperModel
 from custom_silero_vad import SileroVad
 from websockets.server import serve
 from websockets.exceptions import ConnectionClosed
+from fastapi import FastAPI
 
 # === CONFIGURATION ===
 PORT = 3100
@@ -19,15 +20,14 @@ SAMPLE_RATE = 16000
 VAD_CHUNK_MS = 500
 
 # === DEVICE SAFETY LOGIC ===
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-DEVICE_INDEX = 0  # Always set to 0 — CTranslate2 requires int, even for CPU
+DEVICE = "cpu"  # Forced to CPU mode for now
+DEVICE_INDEX = None
 
-print(f"\U0001f9e0 Loading Whisper on {DEVICE.upper()} device {DEVICE_INDEX if DEVICE_INDEX is not None else ''}...")
-whisper_model = WhisperModel("base.en", device=DEVICE, device_index=DEVICE_INDEX)
+print(f"\U0001f9e0 Loading Whisper on {DEVICE.upper()} device...")
+whisper_model = WhisperModel("base.en", device=DEVICE)
 
 print("\U0001f3a7 Initializing Silero VAD...")
 vad = SileroVad()
-from fastapi import FastAPI
 
 app = FastAPI()
 
@@ -54,7 +54,7 @@ async def handle_connection(websocket, path):
             audio_buffer.extend(message)
             vad_window.extend(message)
 
-            min_chunk_size = int(SAMPLE_RATE * 4 * (VAD_CHUNK_MS / 1000))  # 4 bytes per float32
+            min_chunk_size = int(SAMPLE_RATE * 4 * (VAD_CHUNK_MS / 1000))
             if len(vad_window) >= min_chunk_size:
                 print(f"\U0001f9ea VAD chunk ready: {len(vad_window)} bytes")
                 try:

@@ -1,0 +1,7 @@
+{
+  "title": "Master Project Guidelines",
+  "body": "1. Every component must serve the end user — even if the user is you.\n2. Code must be clear before it is clever.\n3. Do not over-engineer. Simple and modular wins.\n4. All features are negotiable. The foundation is not.\n5. Voice is not optional. The system speaks.\n6. Offline-first. Cloud is a backup, not a dependency.\n7. Protect the Codex. It is the memory of the system.\n8. AI serves the architect, not the other way around.\n9. Every commit should move toward elegance.\n10. The system should feel alive — it responds, adapts, and evolves.",
+  "tags": ["guidelines", "engineering", "project-management"],
+  "version": 1,
+  "codex_id": 0
+}

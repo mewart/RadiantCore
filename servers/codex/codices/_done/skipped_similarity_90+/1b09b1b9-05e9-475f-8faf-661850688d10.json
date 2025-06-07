@@ -1,0 +1,14 @@
+{
+  "title": "Radiant Core Project Architecture v1",
+  "body": "Full directory layout for Radiant Core system including:\n- DamianVoiceServer (Express)\n- radiantcore_chat (Vite + React)\n- cloudflared (tunnel config)\n- utilities (startup + health scripts)\n\nIncludes bat scripts, port assignments, and a complete README.md with launch instructions.",
+  "tags": [
+    "radiant-core",
+    "damian",
+    "architecture",
+    "system",
+    "milestone"
+  ],
+  "system_component": "RadiantCoreSystem",
+  "milestone_rank": 3,
+  "emotional_state": "stable"
+}

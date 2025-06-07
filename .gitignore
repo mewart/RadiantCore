@@ -6,7 +6,9 @@ node_modules/
 .venv/
 **/.venv/
 __pycache__/
+**/__pycache__/
 *.pyc
+**/*.pyc
 
 # Conda environments
 env/
@@ -49,3 +51,44 @@ codex_server/codices/
 data/
 
 venv/
+
+# === ADDITIONS BELOW ===
+
+# Junk system files
+*.swp
+*.swo
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# Backups, temp files
+*~
+*.bak
+*.tmp
+
+# AI/ML Models and Data
+models/
+**/models/
+outputs/
+runs/
+checkpoints/
+weights/
+training_data/
+
+# Project build/output artifacts
+dist/
+build/
+**/dist/
+**/build/
+
+# Python poetry
+poetry.lock
+
+# VS Code project config
+.vscode/
+.code-workspace
+
+# Other OS/system files
+ehthumbs.db
+Icon?
+Desktop.ini

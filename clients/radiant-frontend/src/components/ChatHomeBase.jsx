@@ -15,6 +15,25 @@ export default function ChatHomeBase() {
   const processorRef = useRef(null);
   const wsRef = useRef(null);
 
+  const speakText = async (text) => {
+    try {
+      const res = await fetch("http://localhost:3700/api/speak_local", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch audio from TTS");
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    } catch (error) {
+      console.error("🔇 Voice playback failed:", error);
+    }
+  };
+
   const handleSend = () => {
     if (!input.trim()) return;
     setMessages((prev) => [...prev, { text: input, from: "user" }]);
@@ -34,6 +53,9 @@ export default function ChatHomeBase() {
         const data = await res.json();
         console.log("🧠 AI backend reply:", data);
         setMessages((prev) => [...prev, { text: data.reply || "No response from AI.", from: "bot" }]);
+
+        // 🔊 Speak the reply
+        if (data.reply) speakText(data.reply);
       } catch (err) {
         console.error("AI error:", err);
         setMessages((prev) => [...prev, { text: "⚠️ AI is offline or unavailable.", from: "bot" }]);
