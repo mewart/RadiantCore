@@ -1,23 +1,18 @@
-# Dockerfile for XTTS Speaker Service
 FROM python:3.10-slim
-
-# Set working directory
 WORKDIR /app
 
-# Copy model files into the container
-COPY models/xtts_v2 /app/models/xtts_v2
+# Install OS deps
+RUN apt update && apt install -y \
+    git ffmpeg libsndfile1 build-essential cmake curl \
+ && rm -rf /var/lib/apt/lists/*
 
-# Copy main server script
-COPY xtts_server.py /app/xtts_server.py
+# Install Coqui TTS and FastAPI/UVicorn
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir \
+      git+https://github.com/coqui-ai/TTS.git@dev \
+      fastapi==0.110.0 uvicorn==0.27.1
 
-# Install dependencies with cache disabled for slim image hygiene
-RUN pip install --no-cache-dir TTS fastapi uvicorn
+# Copy server & leave model/voice_samples as volumes
+COPY xtts_server.py .
 
-# Ensure output directory exists (for audio)
-RUN mkdir -p /app/outputs
-
-# Expose service port
-EXPOSE 3700
-
-# Start the XTTS FastAPI server
-CMD ["uvicorn", "xtts_server:app", "--host", "0.0.0.0", "--port", "3700"]
+CMD ["uvicorn", "xtts_server:app", "--host", "0.0.0.0", "--port", "3300"]
