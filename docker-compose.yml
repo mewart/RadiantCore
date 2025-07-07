@@ -39,6 +39,7 @@ services:
     ports:
       - "3100:3100"
     restart: always
+    runtime: nvidia
     deploy:
       resources:
         reservations:
@@ -89,7 +90,7 @@ services:
       - "8.8.8.8"
       - "8.8.4.4"
     ports:
-      - "3300:3300"
+      - "3800:3800"
     restart: unless-stopped
     networks:
       - radiantcore-net
@@ -131,15 +132,18 @@ services:
       context: ./servers/xtts_speaker
       dockerfile: Dockerfile
     container_name: xtts_speaker
-    volumes:
-      - /home/mewart/RadiantCore/voice_samples:/app/voice_samples
-    ports:
-      - "3700:3700"
+    runtime: nvidia                # enable GPU passthrough for Coqui TTS
     environment:
-      - ENV_VAR=value
+      - NVIDIA_VISIBLE_DEVICES=0   # adjust as needed
+    volumes:
+      - /home/mewart/RadiantCore/voice_samples:/app/voice_samples:ro
+      - /home/mewart/RadiantCore/models/xtts_v2:/app/models/xtts_v2:ro
+    ports:
+      - "3300:3300"
     restart: unless-stopped
     networks:
       - radiantcore-net
+
 
 networks:
   radiantcore-net:

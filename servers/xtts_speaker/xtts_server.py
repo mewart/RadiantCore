@@ -1,49 +1,48 @@
+import os
+import uuid
+import torch
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 from TTS.api import TTS
-import uuid
-import os
 
-# ✅ Register all required classes to prevent pickle unpickling errors
-from torch.serialization import add_safe_globals
-from TTS.tts.configs.xtts_config import XttsConfig
-from TTS.tts.models.xtts import XttsAudioConfig, XttsArgs
-from TTS.config.shared_configs import BaseDatasetConfig
+# Paths in the container
+MODEL_DIR    = "/app/models/xtts_v2"
+CONFIG_PATH  = os.path.join(MODEL_DIR, "config.json")
+OUTPUT_DIR   = "/app/outputs"
+SAMPLE_WAV   = "/app/voice_samples/default.wav"
 
-add_safe_globals([XttsConfig, XttsAudioConfig, XttsArgs, BaseDatasetConfig])
-
-MODEL_DIR = "/app/models/xtts_v2"
-CONFIG_PATH = os.path.join(MODEL_DIR, "config.json")
-OUTPUT_DIR = "/app/outputs"
-
+# Ensure output dir exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 app = FastAPI()
 
-# Initialize the TTS model
-tts = TTS(model_path=MODEL_DIR, config_path=CONFIG_PATH, gpu=False)
-
-# Test model loading
-print("Testing model loading...")
-tts.tts_model.load_model()
+# Initialize TTS (no trust_remote_code flag—removed in v0.22.0)
+tts = TTS(
+    model_path=MODEL_DIR,
+    config_path=CONFIG_PATH,
+    gpu=torch.cuda.is_available(),
+    progress_bar=False
+)
 
 @app.get("/health")
 def health():
-    return { "status": "healthy" }
+    return {"status": "online"}
 
 @app.post("/api/speak_local")
 async def speak_local(request: Request):
-    body = await request.json()
-    text = body.get("text", "Hello, world.")
-    output_path = os.path.join(OUTPUT_DIR, f"{uuid.uuid4()}.wav")
+    payload     = await request.json()
+    text        = payload.get("text", "Hello, world.")
+    speaker_wav = payload.get("speaker_wav", SAMPLE_WAV)
+    lang        = payload.get("language", "en")
+    out_path    = os.path.join(OUTPUT_DIR, f"{uuid.uuid4()}.wav")
 
+    # multi-speaker models require speaker_wav
     tts.tts_to_file(
         text=text,
-        speaker_wav="/app/voice_samples/default.wav",
-        language="en",
-        file_path=output_path,
+        speaker_wav=speaker_wav,
+        language=lang,
+        file_path=out_path,
         split_sentences=True,
-        use_cuda=False
+        use_cuda=torch.cuda.is_available()
     )
-
-    return FileResponse(output_path, media_type="audio/wav")
+    return FileResponse(out_path, media_type="audio/wav")
