@@ -117,3 +117,5 @@ poetry.lock
 ehthumbs.db
 Icon?
 Desktop.ini
+secrets/*.txt
+.env
