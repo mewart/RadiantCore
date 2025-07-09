@@ -119,3 +119,4 @@ Icon?
 Desktop.ini
 secrets/*.txt
 .env
+stt_client.py
