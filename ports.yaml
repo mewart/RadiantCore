@@ -1,0 +1,60 @@
+# Radiant Core — Port Source of Truth (v1)
+# Each entry:
+#   name        — logical identifier (used in variable names)
+#   port        — host & container port (integer)
+#   expose      — true = published to host/traefik; false = internal‑only
+#   description — plain‑English purpose so we never forget why it exists
+#
+#   * Port numbers MUST be unique across the file.
+#   * Keep this file under version control; CI will gate on duplicates or drift.
+#
+- name: frontend
+  port: 5173
+  expose: true
+  description: "Web UI served by radiant_frontend (Vite dev/prod server)"
+
+- name: stt_ws
+  port: 3100
+  expose: true
+  description: "Speech‑to‑Text WebSocket API (Whisper full‑duplex)"
+
+- name: codex
+  port: 3200
+  expose: true
+  description: "Codex API for code embeddings / retrieval"
+
+- name: xtts
+  port: 3300
+  expose: true
+  description: "XTTS Speaker (Text‑to‑Speech synthesis)"
+
+- name: mindloop
+  port: 3400
+  expose: true
+  description: "AI Mindloop cognitive engine (chain‑of‑thought orchestration)"
+
+- name: vitals
+  port: 3500
+  expose: true
+  description: "Vitalsigns health dashboard & metrics"
+
+- name: gateway
+  port: 3600
+  expose: true
+  description: "AI Gateway — routes chat requests to primary/fallback LLMs"
+
+- name: ai_api
+  port: 3700
+  expose: true
+  description: "General AI utilities (embeddings, similarity search, tools)"
+
+# Internal‑only compute workers
+- name: small_models
+  port: 0    # no host port; internal service only
+  expose: false
+  description: "Lightweight GPU models (embeddings, support)"
+
+- name: large_llm
+  port: 0    # no host port; internal or host‑native
+  expose: false
+  description: "Primary LLM inference on dual 3090 Tis (70B)"
