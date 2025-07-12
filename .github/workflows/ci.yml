@@ -1,0 +1,29 @@
+name: radiant-core-ci
+on: [push, pull_request]
+
+jobs:
+  port-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq v4
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Validate .env ↔ ports.yaml
+        run: |
+          ./bin/gen-env.sh
+          git diff --exit-code .env || (echo "::error::.env drift – run bin/gen-env.sh"; exit 1)
+
+  compose-build:
+    needs: port-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          ./bin/gen-env.sh
+          docker compose -f docker-compose.yml config
+          docker compose build --pull
