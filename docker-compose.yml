@@ -1,105 +1,220 @@
 version: '3.8'
 
+secrets:
+  codex_api_key:
+    file: ./secrets/codex_api_key.txt
+
 services:
+  small_models:
+    build:
+      context: ./servers/small_models
+      dockerfile: Dockerfile
+    image: radiantcore/small_models:${SMALL_MODELS_TAG}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "0"
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3100/health || exit 1"]
+      interval: 30s
+      retries: 3
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - radiantcore-net
+
+  large_llm:
+    build:
+      context: ./servers/large_llm
+      dockerfile: Dockerfile
+    image: radiantcore/large_llm:${LARGE_LLM_TAG}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: "1"
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3400/health || exit 1"]
+      interval: 30s
+      retries: 3
+    restart: on-failure
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    networks:
+      - radiantcore-net
+
   radiant_frontend:
     build:
       context: ./clients/radiant-frontend
       dockerfile: Dockerfile
+    image: radiantcore/radiant_frontend:${FRONTEND_TAG}
     container_name: radiant_frontend
     ports:
       - "5173:5173"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:5173/ || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
     networks:
       - radiantcore-net
     volumes:
-      - /home/mewart/RadiantCore/clients/radiant-frontend:/app
+      - ./clients/radiant-frontend:/app:ro
 
   ai_mindloop:
     build:
       context: ./servers/ai_mindloop
       dockerfile: Dockerfile
+    image: radiantcore/ai_mindloop:${MINDLOOP_TAG}
     container_name: ai_mindloop
     ports:
       - "3400:3400"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3400/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - radiantcore-net
-    # Comment out/remove this line if present:
-    # - /home/mewart/RadiantCore/servers/ai_mindloop:/app
-    #volumes:
-    #  - /home/mewart/RadiantCore/servers/ai_mindloop/ai_mindloop_core.js:/app/ai_mindloop_core.js
-    #  - /home/mewart/RadiantCore/servers/ai_mindloop/services:/app/services
-
 
   stt_ws:
     build:
       context: ./servers/stt_ws
       dockerfile: Dockerfile
+    image: radiantcore/stt_ws:${STT_TAG}
     container_name: stt_ws
     ports:
       - "3100:3100"
-    restart: always
+    runtime: nvidia
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3100/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - radiantcore-net
     volumes:
-      - /home/mewart/RadiantCore/servers/stt_ws:/app
+      - ./servers/stt_ws:/app:ro
 
   codex_api:
     build:
       context: ./servers/codex
       dockerfile: Dockerfile
+    image: radiantcore/codex_api:${CODEX_TAG}
     container_name: codex_api
     ports:
       - "3200:3200"
-    volumes:
-      - /home/mewart/RadiantCore/servers/codex/codices:/app/codices
-      - /home/mewart/RadiantCore/servers/codex/.env:/app/.env
-    environment:
-      - CODEX_API_KEY=RadiantCoreRules!27x9
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3200/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
     networks:
       - radiantcore-net
+    secrets:
+      - codex_api_key
+    environment:
+      CODEX_API_KEY_FILE: /run/secrets/codex_api_key
 
   ai_gateway:
     build:
       context: ./servers/ai_gateway
       dockerfile: Dockerfile
+    image: radiantcore/ai_gateway:${GATEWAY_TAG}
     container_name: ai_gateway
     ports:
       - "3600:3600"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3600/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
     networks:
       - radiantcore-net
     volumes:
-      - /home/mewart/RadiantCore/servers/ai_gateway/server.js:/app/server.js
-      - /home/mewart/RadiantCore/servers/ai_gateway/services:/app/services
-      - /home/mewart/RadiantCore/servers/ai_gateway/.env:/app/.env
+      - ./servers/ai_gateway:/app:ro
 
   ai_api:
     build:
       context: ./servers/ai_api
       dockerfile: Dockerfile
+    image: radiantcore/ai_api:${API_TAG}
     container_name: ai_api
+    ports:
+      - "3800:3800"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3800/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
     dns:
       - "8.8.8.8"
       - "8.8.4.4"
-    ports:
-      - "3300:3300"
-    restart: unless-stopped
     networks:
       - radiantcore-net
     volumes:
-      - /home/mewart/RadiantCore/servers/ai_api:/app
+      - ./servers/ai_api:/app:ro
 
   vitalsigns:
     build:
       context: ./servers/vitalsigns
       dockerfile: Dockerfile
+    image: radiantcore/vitalsigns:${VITALSIGNS_TAG}
     container_name: vitalsigns
     ports:
       - "3500:3500"
@@ -111,6 +226,15 @@ services:
       - ai_gateway
       - ai_api
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3500/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - radiantcore-net
 
@@ -118,28 +242,46 @@ services:
     image: cloudflare/cloudflared:2024.5.0
     container_name: cloudflared
     command: tunnel --config /etc/cloudflared/config.yml run
-    volumes:
-      - /mnt/d/RadiantCore/cloudflared_shared/config.yml:/etc/cloudflared/config.yml:ro
-      - /mnt/d/RadiantCore/cloudflared_shared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:/etc/cloudflared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:ro
     restart: unless-stopped
     networks:
       - radiantcore-net
-
+    volumes:
+      - ./cloudflared_shared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./cloudflared_shared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:/etc/cloudflared/63836ec8-7813-4234-9858-69ae70a1c5e7.json:ro
 
   xtts_speaker:
     build:
       context: ./servers/xtts_speaker
       dockerfile: Dockerfile
+    image: radiantcore/xtts_speaker:${XTTS_TAG}
     container_name: xtts_speaker
-    volumes:
-      - /home/mewart/RadiantCore/voice_samples:/app/voice_samples
-    ports:
-      - "3700:3700"
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     environment:
-      - ENV_VAR=value
+      NVIDIA_VISIBLE_DEVICES: "0"
+    ports:
+      - "3300:3300"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL","curl -sf http://localhost:3300/health || exit 1"]
+      interval: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
     networks:
       - radiantcore-net
+    volumes:
+      - ./voice_samples:/app/voice_samples:ro
+      - ./models/xtts_v2:/app/models/xtts_v2:ro
 
 networks:
   radiantcore-net:

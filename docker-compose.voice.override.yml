@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  xtts_speaker:
+    build:
+      context: ./servers/xtts_speaker
+    container_name: xtts_speaker
+    environment:
+      - CUDA_VISIBLE_DEVICES=1
+    ports:
+      - "3300:3300"
+    networks:
+      - radiantcore-net
+    restart: unless-stopped
+
+  stt_ws:
+    build:
+      context: ./servers/stt_ws
+    container_name: stt_ws
+    environment:
+      - CUDA_VISIBLE_DEVICES=1
+    ports:
+      - "3100:3100"
+    networks:
+      - radiantcore-net
+    restart: unless-stopped
+
+networks:
+  radiantcore-net:
+    external: true

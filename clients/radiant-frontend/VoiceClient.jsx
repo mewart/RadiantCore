@@ -55,7 +55,7 @@ export default function VoiceClient() {
 
   const speakText = async (text) => {
     try {
-      const response = await fetch("http://localhost:3300/api/speak", {
+      const response = await fetch("http://localhost:3800/api/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text })

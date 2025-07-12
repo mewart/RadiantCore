@@ -1,7 +1,3 @@
-# Node.js
-node_modules/
-**/node_modules/
-
 # Python
 .venv/
 **/.venv/
@@ -9,6 +5,35 @@ __pycache__/
 **/__pycache__/
 *.pyc
 **/*.pyc
+
+# Virtual env
+xtts_venv/
+venv/
+
+# Node.js
+node_modules/
+dist/
+build/
+
+# Docker
+*.log
+docker-compose.override.yml
+*.pid
+.env
+
+# Data / models / samples
+voice_samples/
+data/
+models/
+
+# Proxmox / OS
+*.qcow2
+*.img
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
 
 # Conda environments
 env/
@@ -92,3 +117,6 @@ poetry.lock
 ehthumbs.db
 Icon?
 Desktop.ini
+secrets/*.txt
+.env
+stt_client.py
